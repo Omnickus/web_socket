@@ -18,7 +18,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.listen(10)
 
     header = {}
-    accept_list = []
     answer = {
     'header' : '',
     'method' : '',
@@ -36,8 +35,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if conn and addr:
 
             user_addr = str(conn.getsockname()[0])
-            if user_addr not in accept_list:
-                accept_list.append(user_addr)
+            
             print('Get connect from', user_addr)
             data = conn.recv(1024).decode("utf-8")
             if data:
