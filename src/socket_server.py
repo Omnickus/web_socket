@@ -28,14 +28,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     while True:
 
-        conn, addr = s.accept()
+        try:
+            conn, addr = s.accept()
+        except Exception as e:
+            pass
 
         if conn and addr:
 
             user_addr = str(conn.getsockname()[0])
             if user_addr not in accept_list:
                 accept_list.append(user_addr)
-
+            print('Get connect from', user_addr)
             data = conn.recv(1024).decode("utf-8")
             if data:
                 data = data.split('\n')
@@ -58,7 +61,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                             else:
                                 answer['status'] = '200'
 
-                conn.send(  f"HTTP/1.1 {str(answer['status'])} OK\n     \
+                mess_status = conn.send(  f"HTTP/1.1 {str(answer['status'])} OK\n     \
                             Content-Length: 100\n    \
                             Connection: close\n     \
                             Content-Type: text/html\n\n \
@@ -73,9 +76,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                                 <p>{str(answer['request'])}</p>    \
                             ".encode("utf-8"))
                 answer['header'] = ''
-
-            if user_addr in accept_list:
-                pass
-            else:
-                conn.close()
+            print('Send message', mess_status)
+            conn.close()
 
